@@ -449,7 +449,7 @@ void loop() {
             } else if (humidity_scale_value - side_fade_count >= 1) {
               blue = 150;
               green = 0;
-            } else if ((humidity_scale_value - i) < 1 && (humidity_scale_value - i) > 0) {
+            } else if ((humidity_scale_value - side_fade_count) < 1 && (humidity_scale_value - side_fade_count) > 0) {
               blue = map(humidity_decimal, 0, 100, 0, 150);
               green = map(humidity_decimal, 0, 100, 150, 0);
             }
