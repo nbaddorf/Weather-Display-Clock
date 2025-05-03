@@ -422,8 +422,6 @@ void loop() {
       //fade lights in
       if (side_fade_count < side_pixels * 2) {
         if (side_fade_count < side_pixels) {
-          int blue = 0;
-          int green = 150;
           //if (main_humidity != 0) {
             /*
             float contrast = map(side_fade_count, 0, side_pixels - 1, 0, 100);
@@ -439,6 +437,9 @@ void loop() {
             float humidity_scale_value = (float(side_pixels) / 100) * float(main_humidity);
             int humidity_decimal = (humidity_scale_value - int(humidity_scale_value)) * 100;
 
+            int blue = 0;
+            int green = 150;
+
             //if (humidity_scale_value < 1 && side_fade_count == 0) {
             //  blue = map(humidity_decimal, 0, 100, 0, 150);
             //  green = map(humidity_decimal, 0, 100, 150, 0);
@@ -448,7 +449,7 @@ void loop() {
             } else if (humidity_scale_value - side_fade_count >= 1) {
               blue = 150;
               green = 0;
-            } else {
+            } else if ((humidity_scale_value - i) < 1 && (humidity_scale_value - i) > 0) {
               blue = map(humidity_decimal, 0, 100, 0, 150);
               green = map(humidity_decimal, 0, 100, 150, 0);
             }
