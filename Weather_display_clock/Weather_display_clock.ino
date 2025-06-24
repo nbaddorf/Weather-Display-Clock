@@ -53,8 +53,11 @@ const String endpointForcast = "http://api.openweathermap.org/data/2.5/forecast?
 
 
 const char* ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = -18000;  //Replace with your GMT offset (seconds)
+const long gmtOffset_sec = -14400;  //Replace with your GMT offset (seconds)
 const int daylightOffset_sec = 0;   //Replace with your daylight offset (seconds)
+
+const int turn_on_in_morning = 390; //in minutes, have the clock turn start setting weather and lights at 6:30am in the morning.
+const int turn_off_in_morning = 1170; //in minutes, have the clock turn off lights at 7:30PM
 
 unsigned long currentMillis;
 unsigned long previousMinuteMillis = 0;
@@ -104,7 +107,9 @@ int lcd_display_counter = 0;
 int total_pixels = sun_pixels + side_pixels + side_pixels;
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(total_pixels, light_strip_pin, NEO_GRB + NEO_KHZ800);
 
-UnixTime stamp(-5);
+//UnixTime does not get the time. All it does is convert a time number in form of unixtime to min, hours, days etc. This is
+//used to find the time for sunrise and sunset
+UnixTime stamp(gmtOffset_sec/3600); //-4 hours from gmt. 
 
 // Checks if motion was detected
 void IRAM_ATTR detectsMovement() {
@@ -275,7 +280,7 @@ void loop() {
     time_since_updating_servos++;
 
     //if it is between 7:00 AM and 7:30 PM then bedtime mode is false
-    if (current_min >= 420 && current_min <= 1170) { // 1170/60 min = 7:30 PM
+    if (current_min >= turn_on_in_morning && current_min <= turn_off_in_morning) { // 1170/60 min = 7:30 PM
       bedtime = false;
     } else {
       bedtime = true;
@@ -553,6 +558,9 @@ void loop() {
 
     //there are 0.44704 m/s in 1 mph
     float windMph = wind_speed / 0.44704;
+
+    fTemp = constrain(fTemp, 20, 90);
+    windMph = constrain(windMph, 0, 70);
 
     int pos3;
     int pos4;
